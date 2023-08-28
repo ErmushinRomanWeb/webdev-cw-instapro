@@ -156,6 +156,7 @@ export const renderApp = () => {
     return renderPostsUserPageComponent({
       appEl,
       posts,
+      token: getToken(),
     });
   }
 }; //КОНЕЦ РЕНДЕРА

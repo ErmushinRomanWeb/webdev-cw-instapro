@@ -1,9 +1,11 @@
+import { ru } from "date-fns/locale";
+import { formatDistanceToNow } from "date-fns";
 import { USER_POSTS_PAGE } from "../routes.js";
 import { renderHeaderComponent } from "./header-component.js";
-import { posts, goToPage } from "../index.js";
-import { likeMaker } from "./add-like.js";
+import { goToPage } from "../index.js";
+import { dislike, postLike } from "../api.js";
 
-export function renderPostsPageComponent({ appEl, posts, token}) {
+export function renderPostsPageComponent({ appEl, posts, token }) {
   const appPostsHtml = `
   <div class="page-container">
     <div class="header-container"></div>
@@ -15,10 +17,13 @@ export function renderPostsPageComponent({ appEl, posts, token}) {
   // TODO: реализовать рендер постов из api
   const postsElementHtml = posts
     .map((post) => {
+      const createDate = formatDistanceToNow(new Date(post.createdAt), {
+        locale: ru,
+      });
       console.log(post.isLiked);
-      const likesLength = post.likes.length
+      const likesLength = post.likes.length;
       console.log(likesLength);
-//asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k
+      //asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k
       //Как метод map изменяет элементы массива, пока на выходе мы получаем пустой массив? так как на сервере нет информации, а мы будем втавлять информацию с сервера в разметку HTML, поэтому я вставил заглушку в виде базовой разметки в app, для того, чтобы ф-я нашла элементы из разметки.
       return `<li class="post">
   <div class="post-header" data-user-id="${post.user.id}">
@@ -30,10 +35,20 @@ export function renderPostsPageComponent({ appEl, posts, token}) {
   </div>
   <div class="post-likes">
     <button data-post-id="${post.id}" class="like-button">
-      <img src="${post.isLiked ? './assets/images/like-active.svg':'./assets/images/like-not-active.svg'}">
+      <img src="${
+        post.isLiked
+          ? "./assets/images/like-active.svg"
+          : "./assets/images/like-not-active.svg"
+      }">
     </button>
     <p class="post-likes-text">
-      Нравится: <strong>${likesLength === 0? 0 : `${post.likes.at(-1).name}${likesLength > 1? `и еще ${likesLength - 1}`: ''}` }</strong>
+      Нравится: <strong>${
+        likesLength === 0
+          ? 0
+          : `${post.likes.at(-1).name}${
+              likesLength > 1 ? `и еще ${likesLength - 1}` : ""
+            }`
+      }</strong>
     </p>
   </div>
   <p class="post-text">
@@ -41,19 +56,19 @@ export function renderPostsPageComponent({ appEl, posts, token}) {
     ${post.description}
   </p>
   <p class="post-date">
-    ${post.date}
+    ${createDate}
   </p>
 </li>`;
     })
     .join("");
-    
+
   /**
   
    * 
    * TODO: чтобы отформатировать дату создания поста в виде "19 минут назад"
    * можно использовать https://date-fns.org/v2.29.3/docs/formatDistanceToNow
    */
-  ulContainer.innerHTML = postsElementHtml
+  ulContainer.innerHTML = postsElementHtml;
   renderHeaderComponent({
     element: document.querySelector(".header-container"),
   });
@@ -65,5 +80,31 @@ export function renderPostsPageComponent({ appEl, posts, token}) {
       });
     });
   }
-likeMaker(posts, token, appEl)
+  const likeButtonElements = document.querySelectorAll(".like-button");
+
+  likeButtonElements.forEach((likeButtonElement, index) => {
+    likeButtonElement.addEventListener("click", (event) => {
+      const post = posts[index];
+      console.log(post);
+      let { id } = post;
+      console.log(id);
+      let { isLiked } = post;
+      console.log(isLiked);
+      if (isLiked) {
+        dislike({ token, id }).then((responseData) => {
+          console.log(responseData.post.likes);
+          posts[index].likes = responseData.post.likes;
+          posts[index].isLiked = responseData.post.isLiked;
+          renderPostsPageComponent({ appEl, posts, token });
+        });
+      } else {
+        postLike({ token, id }).then((responseData) => {
+          console.log(responseData.post.likes);
+          posts[index].likes = responseData.post.likes;
+          posts[index].isLiked = responseData.post.isLiked;
+          renderPostsPageComponent({ appEl, posts, token });
+        });
+      }
+    });
+  });
 }
