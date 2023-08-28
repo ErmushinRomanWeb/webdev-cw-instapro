@@ -69,9 +69,9 @@ export function renderAuthPageComponent({ appEl, setUser }) {//функция о
     const uploadImageContainer = appEl.querySelector(".upload-image-container");//если переменная isLoginMade - это лож, то js отрендерил элементы страници регистрации в нашем контейнере и появился элемент - upload-image-container для загрузки изображения пользователя, ищем его для того, чтобы использовать
 
     if (uploadImageContainer) {//если нашли, то вызываем ф-ю 
-      renderUploadImageComponent({//запустилась функция, которая отрисовывает 
-        element: appEl.querySelector(".upload-image-container"),
-        onImageUrlChange(newImageUrl) {
+      renderUploadImageComponent({//запустилась функция, которая отрисовывает картинку
+        element: appEl.querySelector(".upload-image-container"),//!Это можно использовать в add-page
+        onImageUrlChange(newImageUrl) { //функция объявляется в upload-image-component
           imageUrl = newImageUrl;
         },
       });
