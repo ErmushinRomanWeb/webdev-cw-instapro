@@ -1,12 +1,10 @@
 // Замени на свой, чтобы получить независимый от других набор данных.
 
-import { replaceAllFunction } from "./components/replaceAll-function";
 
 // "боевая" версия инстапро лежит в ключе prod
 const personalKey = "Ermushin4";
 const baseHost = "https://wedev-api.sky.pro";
 const postsHost = `${baseHost}/api/v1/${personalKey}/instapro`;
-replaceAllFunction
 
 export function getPosts({ token }) {
   return fetch(postsHost, {

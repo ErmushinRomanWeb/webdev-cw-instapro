@@ -40,10 +40,9 @@ export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
     appEl.innerHTML = appHtml;
 
     document.getElementById("add-button").addEventListener("click", () => {
-      const postDiscrition = document.getElementById("inputId");
-      const censoredDescription = replaceAllFunction(postDiscrition.value)
+      const postDiscrition = replaceAllFunction(document.getElementById("inputId").value);
       onAddPostClick({
-        description: censoredDescription,
+        description: postDiscrition,
         imageUrl: imageUrl,
       });
     });
