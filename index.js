@@ -28,7 +28,6 @@ const getToken = () => {
   return token; //возврощаеттся значение токена
 };
 
-
 export const logout = () => {
   //данная функция отвечает за выход из учетной записи в ней запускается функция removeUserFromLocalStorage(helpersk.js), запускается в renderHeaderComponent, при клике на кнопку
   user = null;
@@ -72,16 +71,18 @@ export const goToPage = (newPage, data) => {
         });
     }
 
-    if (newPage === USER_POSTS_PAGE) {//Если пользователь находится на странице 
+    if (newPage === USER_POSTS_PAGE) {
+      //Если переменная page = USER_POST_PAGE, то
       page = LOADING_PAGE;
       renderApp();
+
       return setTimeout(() => {
         posts = posts.filter((post) => {
           if (post.user.id === data.userId) {
             return post;
           }
-          page = USER_POSTS_PAGE;
         });
+        page = USER_POSTS_PAGE;
         console.log(posts);
         renderApp();
       }, 700);

@@ -4,6 +4,8 @@ import { USER_POSTS_PAGE } from "../routes.js";
 import { renderHeaderComponent } from "./header-component.js";
 import { goToPage } from "../index.js";
 import { dislike, postLike } from "../api.js";
+import { replaceAllFunction } from "./replaceAll-function.js";
+
 
 export function renderPostsUserPageComponent({ appEl, posts, token }) {
   const userPost = posts[0];

@@ -1,4 +1,5 @@
 import { renderHeaderComponent } from "./header-component.js";
+import { replaceAllFunction } from "./replaceAll-function.js";
 import { renderUploadImageComponent } from "./upload-image-component.js";
 
 export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
@@ -40,8 +41,9 @@ export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
 
     document.getElementById("add-button").addEventListener("click", () => {
       const postDiscrition = document.getElementById("inputId");
+      const censoredDescription = replaceAllFunction(postDiscrition.value)
       onAddPostClick({
-        description: postDiscrition.value,
+        description: censoredDescription,
         imageUrl: imageUrl,
       });
     });
