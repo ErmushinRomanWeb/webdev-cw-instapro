@@ -4,32 +4,42 @@ import { USER_POSTS_PAGE } from "../routes.js";
 import { renderHeaderComponent } from "./header-component.js";
 import { goToPage } from "../index.js";
 import { dislike, postLike } from "../api.js";
+import { replaceAllFunction } from "./replaceAll-function.js";
 
-export function renderPostsPageComponent({ appEl, posts, token }) {
+
+export function renderPostsUserPageComponent({ appEl, posts, token }) {
+  const userPost = posts[0];
+  const { user } = userPost;
+  console.log(userPost);
+
   const appPostsHtml = `
   <div class="page-container">
     <div class="header-container"></div>
+    <div class="posts-user-header">
+    <img src="${user.imageUrl}" class="posts-user-header__user-image">
+    <p class="posts-user-header__user-name">${user.name}</p>
+</div>
     <ul id="ulContainerForPost" class="posts">
     </ul>
-  </div>`;
+  </div>
+`;
+
   appEl.innerHTML = appPostsHtml;
   const ulContainer = document.getElementById("ulContainerForPost");
   // TODO: реализовать рендер постов из api
+  console.log(appEl.innerHTML);
+  console.log("Актуальный список постов:", posts);
   const postsElementHtml = posts
     .map((post) => {
       const createDate = formatDistanceToNow(new Date(post.createdAt), {
         locale: ru,
       });
-      console.log(post.isLiked);
       const likesLength = post.likes.length;
-      console.log(likesLength);
+      console.log(post.user.name);
       //asb4c4boc86gasb4c4boc86g37w3cc3bo3b83k4g37k3bk3cg3c03ck4k
       //Как метод map изменяет элементы массива, пока на выходе мы получаем пустой массив? так как на сервере нет информации, а мы будем втавлять информацию с сервера в разметку HTML, поэтому я вставил заглушку в виде базовой разметки в app, для того, чтобы ф-я нашла элементы из разметки.
       return `<li class="post">
-  <div class="post-header" data-user-id="${post.user.id}">
-      <img class="post-header__user-image" src="${post.user.imageUrl}">
-      <p class="post-header__user-name">${post.user.name}</p>
-  </div>
+  
   <div class="post-image-container">
     <img class="post-image" src="${post.imageUrl}">
   </div>
@@ -46,7 +56,7 @@ export function renderPostsPageComponent({ appEl, posts, token }) {
         likesLength === 0
           ? 0
           : `${post.likes.at(-1).name}${
-              likesLength > 1 ? ` и еще ${likesLength - 1}` : ""
+              likesLength > 1 ? `и еще ${likesLength - 1}` : ""
             }`
       }</strong>
     </p>
@@ -56,19 +66,17 @@ export function renderPostsPageComponent({ appEl, posts, token }) {
     ${post.description}
   </p>
   <p class="post-date">
-    ${createDate + ' ' + ' назад'}
+    ${createDate}
   </p>
 </li>`;
     })
     .join("");
-
   /**
-  
-   * 
    * TODO: чтобы отформатировать дату создания поста в виде "19 минут назад"
    * можно использовать https://date-fns.org/v2.29.3/docs/formatDistanceToNow
    */
   ulContainer.innerHTML = postsElementHtml;
+
   renderHeaderComponent({
     element: document.querySelector(".header-container"),
   });
@@ -95,14 +103,14 @@ export function renderPostsPageComponent({ appEl, posts, token }) {
           console.log(responseData.post.likes);
           posts[index].likes = responseData.post.likes;
           posts[index].isLiked = responseData.post.isLiked;
-          renderPostsPageComponent({ appEl, posts, token });
+          renderPostsUserPageComponent({ appEl, posts, token });
         });
       } else {
         postLike({ token, id }).then((responseData) => {
           console.log(responseData.post.likes);
           posts[index].likes = responseData.post.likes;
           posts[index].isLiked = responseData.post.isLiked;
-          renderPostsPageComponent({ appEl, posts, token });
+          renderPostsUserPageComponent({ appEl, posts, token });
         });
       }
     });

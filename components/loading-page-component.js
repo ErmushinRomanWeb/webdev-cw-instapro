@@ -1,6 +1,6 @@
 import { renderHeaderComponent } from "./header-component.js";
 
-export function renderLoadingPageComponent({ appEl, user, goToPage }) {
+export function renderLoadingPageComponent({ appEl, user, goToPage }) {//функция рендерит разметку, которая отвечает за процесс зкагрузки страницы, реализована посредствам 3 дивов, которые поочередно меняют свой размер.
   const appHtml = `
               <div class="page-container">
                 <div class="header-container"></div>
@@ -9,7 +9,7 @@ export function renderLoadingPageComponent({ appEl, user, goToPage }) {
                 </div>
               </div>`;
 
-  appEl.innerHTML = appHtml;
+  appEl.innerHTML = appHtml;//как только данные с сервера получены, вызывается функция renderHeaderComponent, которая рендерит header страницы
 
   renderHeaderComponent({
     user,

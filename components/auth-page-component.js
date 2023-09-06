@@ -1,8 +1,9 @@
 import { loginUser, registerUser } from "../api.js";
 import { renderHeaderComponent } from "./header-component.js";
+import { replaceAllFunction } from "./replaceAll-function.js";
 import { renderUploadImageComponent } from "./upload-image-component.js";
 
-export function renderAuthPageComponent({ appEl, setUser }) {
+export function renderAuthPageComponent({ appEl, setUser }) {//функция отвечает за страницу авторизации
   let isLoginMode = true;
   let imageUrl = "";
 
@@ -20,7 +21,8 @@ export function renderAuthPageComponent({ appEl, setUser }) {
                 </h3>
               <div class="form-inputs">
     
-                  ${
+                  ${//если не loginMode то добавляем в дерево input с именем
+                    //!ИНСАЙТ: ТУТ МЫ НЕ ПЕРЕРЕНДЕРИВАЕМ СТРАНИЦУ, КАК ДЕЛАЛИ ЭТО В ДЗ, А ПРОСТО ИЗМЕНЯЕМ НЕКОТОРЫЕ ЭЛЕМЕНТЫ, ПРИЧЕМ, ДЕЛАЕМ ЭТО ПОТОМУ, ЧТО ФОРМЫ СХОЖИ ПО СТРОЕНИЮ
                     !isLoginMode
                       ? `
                       <div class="upload-image-container"></div>
@@ -52,24 +54,25 @@ export function renderAuthPageComponent({ appEl, setUser }) {
       </div>    
 `;
 
-    appEl.innerHTML = appHtml;
+    appEl.innerHTML = appHtml;//присваеваем аргументу, который является app контейнером значение appHtml и отрисовывается страница логинства, по умолчанию
 
     // Не вызываем перерендер, чтобы не сбрасывалась заполненная форма
     // Точечно обновляем кусочек дом дерева
-    const setError = (message) => {
+    const setError = (message) => {//функция отвечает за добавление текстового контента в div form-error при неудачной авторизации
+      console.log(message);
       appEl.querySelector(".form-error").textContent = message;
     };
 
     renderHeaderComponent({
-      element: document.querySelector(".header-container"),
+      element: document.querySelector(".header-container"),//вызываем функцию и аргументом ставим ключ -  element и значение - элемент по селектору
     });
 
-    const uploadImageContainer = appEl.querySelector(".upload-image-container");
+    const uploadImageContainer = appEl.querySelector(".upload-image-container");//если переменная isLoginMade - это лож, то js отрендерил элементы страници регистрации в нашем контейнере и появился элемент - upload-image-container для загрузки изображения пользователя, ищем его для того, чтобы использовать
 
-    if (uploadImageContainer) {
-      renderUploadImageComponent({
-        element: appEl.querySelector(".upload-image-container"),
-        onImageUrlChange(newImageUrl) {
+    if (uploadImageContainer) {//если нашли, то вызываем ф-ю 
+      renderUploadImageComponent({//запустилась функция, которая отрисовывает картинку
+        element: appEl.querySelector(".upload-image-container"),//!Это можно использовать в add-page
+        onImageUrlChange(newImageUrl) { //функция объявляется в upload-image-component
           imageUrl = newImageUrl;
         },
       });
@@ -104,9 +107,10 @@ export function renderAuthPageComponent({ appEl, setUser }) {
             setError(error.message);
           });
       } else {
-        const login = document.getElementById("login-input").value;
-        const name = document.getElementById("name-input").value;
-        const password = document.getElementById("password-input").value;
+        const login = replaceAllFunction(document.getElementById("login-input").value);
+        const name = replaceAllFunction(document.getElementById("name-input").value);
+        const password = replaceAllFunction(document.getElementById("password-input").value);
+
         if (!name) {
           alert("Введите имя");
           return;
